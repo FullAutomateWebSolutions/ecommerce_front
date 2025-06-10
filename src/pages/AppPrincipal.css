@@ -1,0 +1,33 @@
+
+.hover-border-card {
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+.hover-border-card:hover {
+  border: 1px solid #030b13; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+
+
+  .custom-input {
+    transition: border-color 0.3s ease;
+  }
+
+  .custom-input::placeholder {
+    color: rgba(0, 0, 0, 0.65); /* Placeholder mais nítido */
+  }
+
+  .custom-input:hover {
+    border-color: #1890ff !important; /* Cor da borda no hover */
+  }
+
+
+  /* Evita corte brusco do texto no menu */
+.ant-layout-sider-collapsed .ant-menu-item, 
+.ant-layout-sider-collapsed .ant-menu-submenu-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

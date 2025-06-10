@@ -1,0 +1,14 @@
+body {
+  background-color: #f5f6fa;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.ant-layout {
+  background: #f5f6fa !important;
+}
