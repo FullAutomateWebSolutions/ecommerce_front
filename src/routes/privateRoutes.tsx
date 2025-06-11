@@ -1,14 +1,21 @@
-import React, { ReactNode } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
+import { ReactNode } from 'react';
 
-
-/*Controle de rotas controlador de passagem pelo sistema */
 interface PrivateRouteProps {
   children: ReactNode;
-  role?: string; 
+  role?: string;
   tela?: string;
 }
-//@ts-ignore
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, tela, role }) => {
+
+const PrivateRoute = ({ children }: PrivateRouteProps) => {
+  const { user } = useAuth();
+
+  // if (loading) return <div>Carregando...</div>;
+  console.log("Parando")
+
+  if (!user) return <Navigate to="/login" replace />;
+
   return <>{children}</>;
 };
 

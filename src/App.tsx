@@ -1,28 +1,40 @@
+import 'antd/dist/reset.css';
+import { Button, Space, Typography, message } from 'antd';
+import { getAuth, signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import 'antd/dist/reset.css'; // Reset de estilo do Ant Design
-export interface IUser {
-name: string
-}
+const App = () => {
+  const navigate = useNavigate();
+  const auth = getAuth();
 
-// import { theme } from "antd";
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      message.success('Deslogado com sucesso!');
+      localStorage.removeItem('token');
+      navigate('/login');
+    } catch (error) {
+      console.error('Erro ao deslogar:', error);
+      message.error('Erro ao deslogar');
+    }
+  };
 
-// const isDark = true; // pode vir de estado
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) navigate('/login');
+  }, []);
 
-// <ConfigProvider
-//   theme={{
-//     algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-//   }}
-// >
-//   <App />
-// </ConfigProvider>
-
-
-//https://ant.design/docs/react/customize-theme#componentsconfig
-function App() {
   return (
-   <>OI CHAU, BRIGADO</>
+    <div style={{ padding: 24 }}>
+      <Space direction="vertical" size="middle">
+        <Typography.Title level={3}>Bem-vindo 👋</Typography.Title>
+        <Button type="primary" danger onClick={handleLogout}>
+          Deslogar
+        </Button>
+      </Space>
+    </div>
   );
-}
+};
 
 export default App;
-

@@ -21,12 +21,14 @@ import CadastroRedeModelo from '@/pages/CadastroRedeModelo.page';
 import AppProt1 from '@/pages/AppPrincipalLinear.page';
 import { ProductList } from '@/pages/ProductList';
 import AppProt from '@/pages/AppPrincipal.page';
+import { AuthProvider } from '@/contexts/AuthContext';
+import AuthPage from '@/pages/autenticacao.base';
 
 /*Passagens do sistemas rotas existentes */
 const router = createBrowserRouter([
   {
     // Rota principal
-    path: "/",    element: (<PrivateRoute><AppProt/></PrivateRoute>),
+    path: "/",    element: (<AuthProvider><App/></AuthProvider>),
     // path: "/",    element: (<PrivateRoute><AppProt1/></PrivateRoute>),
     
  
@@ -66,7 +68,7 @@ const router = createBrowserRouter([
      { path: '*', element: <ErrorPage />  }
     ],
     }, //Rota publica
-    { path: 'login', element: <App />  },
+    { path: 'login', element: <AuthPage />  },
     { path: '*', element: <ErrorPage />  },
    
     
