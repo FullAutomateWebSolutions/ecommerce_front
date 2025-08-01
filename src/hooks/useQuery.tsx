@@ -1,17 +1,25 @@
-import { useQuery, useMutation, useQueryClient,  UseMutationOptions } from '@tanstack/react-query';
-
+import { useQuery, useMutation, useQueryClient,UseQueryOptions,  UseMutationOptions } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { api } from '../axios/axios';
 
 type UseGenericDeleteOptions<TData, TVariables> = UseMutationOptions<TData, unknown, TVariables>;
 type UseGenericPostOptions<TData, TVariables> = UseMutationOptions<TData, unknown, TVariables>;
+
+
 // Função genérica para GET requests
-export const useGenericGet = (endpoint : string, queryKey: string, options = {}) => {
+export const useGenericGet = (
+    endpoint : string, 
+    queryKey: string, 
+    options = {}
+  ) => {
   return useQuery({
     queryKey: [queryKey],
     queryFn: () => api.get(endpoint).then((response) => response.data),
     ...options,
   });
 };
+
+
 export const useGenericPost = <TData, TVariables>(
   endpoint: string,
   queryKey: string,
@@ -41,7 +49,7 @@ export const useGenericPost = <TData, TVariables>(
     ...options,
   });
 };
-export const useGenericDelete = <TData, TVariables>(
+export const useGenericDeleteHeader = <TData, TVariables>(
   endpoint: string,
   queryKey: string,
   options: UseGenericDeleteOptions<TData, TVariables> = {}
@@ -66,6 +74,8 @@ export const useGenericDelete = <TData, TVariables>(
     ...options,
   });
 };
+
+
 export const useGenericPut = <TData, TVariables>(
   endpoint: string,
   queryKey: string,

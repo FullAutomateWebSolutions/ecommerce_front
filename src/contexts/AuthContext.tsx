@@ -1,35 +1,111 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
-
-// import { getAnalytics, setAnalyticsCollectionEnabled } from "firebase/analytics";
-
-// const analytics = getAnalytics();
-// if (process.env.NODE_ENV === "development") {
-//   setAnalyticsCollectionEnabled(analytics, false);
-// }
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { loginStore } from '@/store/useStore';
 
 interface AuthContextProps {
-  user: any;
+  use: any;
   loading: boolean;
+  role: string[] | null;
 }
 
-const AuthContext = createContext<AuthContextProps>({ user: null, loading: true });
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(null);
+const AuthContext = createContext<AuthContextProps>({
+  use: null,
+  loading: true,
+  role: null,
+});
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const { userSing, fech, user } = loginStore();
+  const [use, setUse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const auth = getAuth();
+  const [role, setRole] = useState<string[] | null>([]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        //@ts-ignore
-      setUser(user);
+    if (user?.token && userSing?.emailVerified === true) {
+      // já tem dados persistidos, só seta
+      setUse(user);
+      setRole([...userSing?.customClaims?.role || []]);
       setLoading(false);
-    });
-    return unsubscribe;
+      // opcional: atualiza dados do firebase
+      fech(); 
+    } else {
+      setUse(null);
+      setRole(null);
+      setLoading(false);
+    }
   }, []);
 
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
+  useEffect(() => {
+    if (userSing?.uid && userSing?.emailVerified === true) {
+      setUse(userSing);
+      setRole([...userSing?.customClaims?.role || []]);
+      setLoading(false);
+    }
+  }, [userSing]);
+
+  return (
+    <AuthContext.Provider value={{ use, loading, role }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+
+///////////////////////////////////////////////////////////////
+// import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+// import { loginStore } from "@/store/useStore";
+
+// interface AuthContextProps {
+//   user: any;
+//   loading: boolean;
+//   role: string[] | null;
+// }
+
+// const AuthContext = createContext<AuthContextProps>({
+//   user: null,
+//   loading: true,
+//   role: null,
+// });
+
+// export const AuthProvider = ({ children }: { children: ReactNode }) => {
+//   const { userSing, fech, user } = loginStore();
+//   const [currentUser, setCurrentUser] = useState<any>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [role, setRole] = useState<string[] | null>(null);
+
+//   useEffect(() => {
+//     if (user?.token && userSing?.emailVerified === true) {
+//       setCurrentUser(user);
+//       setRole(userSing?.customClaims?.role ?? []);
+//       setLoading(false);
+//       fech();
+//     } else {
+//       setCurrentUser(null);
+//       setRole(null);
+//       setLoading(false);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     if (userSing?.uid && userSing?.emailVerified === true) {
+//       setCurrentUser(userSing);
+//       setRole(userSing?.customClaims?.role ?? []);
+//       setLoading(false);
+//     }
+//   }, [userSing]);
+
+//   return (
+//     <AuthContext.Provider value={{ user: currentUser, loading, role }}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => {
+//   return useContext(AuthContext);
+// };

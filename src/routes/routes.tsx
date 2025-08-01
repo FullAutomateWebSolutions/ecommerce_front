@@ -1,71 +1,31 @@
 
 import { createBrowserRouter } from 'react-router-dom';
 import PrivateRoute from './privateRoutes';
-import App from '../App';
-import ErrorPage from '../pages/Error.page';
-import { ProdutoCadastro } from '../pages/expl/ProdutoCadastro';
-import { ProdutoLista } from '../pages/expl/ProdutoLista';
-import { ProdutoDetalhes } from '../pages/expl/ProdutoDetalhes';
-import { CategoriaCadastro } from '../pages/expl/CategoriaCadastro';
-import HomePage from '@/pages/HomePage';
-import HomePageUser from '@/pages/HomePageUser';
-import FalhasAgrupadas from '@/pages/expl/FalhasAgrupadas';
-import FalhasRecente from '@/pages/FalhasRecente.page';
-import ReprocessarFalhas from '@/pages/ReprocessarFalhas.page';
-import { FalhasRecenteDetalhes } from '@/pages/FalhasRecenteDetalhes.page';
-import CadastroRede from '@/pages/CadastroRede.page';
-import { CadastroRedeEditar } from '@/pages/CadastroRedeEditar.page';
-import CadastroBandeira from '@/pages/CadastroBandeira.page';
-import { CadastroBandeiraEditar } from '@/pages/CadastroBandeiraEditar.page';
-import CadastroRedeModelo from '@/pages/CadastroRedeModelo.page';
-import AppProt1 from '@/pages/AppPrincipalLinear.page';
-import { ProductList } from '@/pages/ProductList';
-import AppProt from '@/pages/AppPrincipal.page';
-import { AuthProvider } from '@/contexts/AuthContext';
-import AuthPage from '@/pages/autenticacao.base';
+import { AuthProvider } from '../contexts/AuthContext';
+import ErrorPage from '../pages/manut/Error404';
+import AuthPage from '../pages/aut/autenticacao';
+import ErrorPage404 from '../pages/manut/Error404';
+import ErrorPage403 from '../pages/manut/Error403';
+import App from '@/App';
+import User from '@/pages/user/user';
+import Product from '@/pages/product/product';
+import MercadoLivre from '@/pages/MercadoLivre/page/MercadoLivre';
+import Inventory from '@/pages/Inventory/Inventory';
 
 /*Passagens do sistemas rotas existentes */
 const router = createBrowserRouter([
   {
     // Rota principal
-    path: "/",    element: (<AuthProvider><App/></AuthProvider>),
-    // path: "/",    element: (<PrivateRoute><AppProt1/></PrivateRoute>),
-    
- 
-    //Rotas privadas
+    path: "/",    element: (<AuthProvider ><PrivateRoute roleUser='public'><App/></PrivateRoute></AuthProvider>),
+    //Rotas privadas  
     children: [
-        // {        index: true, element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><ProductList/></PrivateRoute>),},    
-        {        path: "0", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><ProductList/></PrivateRoute>),},    
-      //   {        path: "1", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'> <ProdutoCadastro /></PrivateRoute>),},       
-      //   {        path: "2", element: ( <PrivateRoute tela='/2' role='Admin'><ProdutoLista  /></PrivateRoute>),},
-      //   {        path: "/3", element: ( <PrivateRoute tela='/3' role='Admin'><ProdutoDetalhes /></PrivateRoute>),},
-      //   {        path:"/3/novo", element: ( <PrivateRoute tela='/3' role='Admin'><ProdutoDetalhes /></PrivateRoute>),},
-      //   {        path:"/3/editar/:id", element: ( <PrivateRoute tela='/3' role='Admin'><ProdutoDetalhes /></PrivateRoute>),},
-      //   {        path:"/3/:id", element: ( <PrivateRoute tela='/3' role='Admin'><ProdutoDetalhes /></PrivateRoute>),},
-      //   {        path: "6", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><CategoriaCadastro /></PrivateRoute>),},
-      //   {        path: "8", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><FalhasAgrupadas /></PrivateRoute>),},
-      //   //ReprocessarFalhas
-      //   {        path: "11", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><ReprocessarFalhas /></PrivateRoute>),},
-        
-      //   ///FalhasRecentes
-      //   {        path: "15", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><FalhasRecente /></PrivateRoute>),},
-      //   {        path: "/falhas/:id", element: ( <PrivateRoute tela='Monitoramento' role='Admin'><FalhasRecenteDetalhes /></PrivateRoute>),},
-      //   /// Cadastro de Rede
-      //   {        path: "/67", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroRede /></PrivateRoute>),},
-      //   {        path: "/rede/:id/:descricao", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroRedeEditar /></PrivateRoute>),},
-      //   {        path: "/rede/create", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroRedeEditar /></PrivateRoute>),},
-      //  /// Cadastro de Bandeira
-      //   {        path: "/78", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroBandeira /></PrivateRoute>),},
-      //   {        path: "/bandeira/:id/:descricao/:idRede", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroBandeiraEditar /></PrivateRoute>),},
-      //   {        path: "/bandeira/create", element: ( <PrivateRoute tela='/3' role='Admin'><CadastroBandeiraEditar /></PrivateRoute>),}, 
-      //   // CadastroRedeModelo
-      //   {        path: "10", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><CadastroRedeModelo /></PrivateRoute>),},
-        
-        // {        path: "99", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><TelaVinculoID/></PrivateRoute>),},
-        // {        path: "10/:id", element: ( <PrivateRoute tela='/painel/Monitoramento' role='Admin'><CadastroRedeModeloDetalhe /></PrivateRoute>),},
-
-
-     { path: '*', element: <ErrorPage />  }
+     {        path :"perfil", element: (<AuthProvider ><PrivateRoute roleUser='public'><User/></PrivateRoute></AuthProvider>),},     
+     {        path :"inventario", element: (<AuthProvider ><PrivateRoute roleUser='public'><Inventory/></PrivateRoute></AuthProvider>),},     
+     {        path :"MercadoLivre", element: (<AuthProvider ><PrivateRoute roleUser='public'><MercadoLivre/></PrivateRoute></AuthProvider>),},     
+     {        path :"cadastro", element: (<AuthProvider ><PrivateRoute roleUser='super'><Product/></PrivateRoute></AuthProvider>),},    
+     { path: '404', element:           <AuthProvider ><PrivateRoute roleUser='public'><ErrorPage404/></PrivateRoute></AuthProvider>  },
+     { path: '403', element:           <AuthProvider ><PrivateRoute roleUser='public'><ErrorPage403/></PrivateRoute></AuthProvider>  },
+     { path: '*', element:             <AuthProvider ><PrivateRoute roleUser='public'><ErrorPage/></PrivateRoute></AuthProvider>  }
     ],
     }, //Rota publica
     { path: 'login', element: <AuthPage />  },

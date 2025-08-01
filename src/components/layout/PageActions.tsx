@@ -40,7 +40,7 @@ export const PageActions = ({
   createText = 'Novo',  refreshText = 'Atualizar',  excelText = 'Download Excel',  returnText = 'Voltar', onJoinText, editText = 'Editar',filterText = 'Editar',saveText="Salvar",detailText="Detalhes"
 }: PageActionsProps) => {
   return (
-    <Space.Compact>
+    <Space>
       {onRefresh && (   <Button icon={<ReloadOutlined />} onClick={onRefresh}>          {refreshText}</Button>)}      
       {onCreate && (   <Button type="primary" icon={<PlusOutlined />} onClick={onCreate}>     {createText}</Button>)}
       {onExcel && (    <Button type="primary" icon={<DownloadOutlined />} onClick={onExcel}>   {excelText}</Button>)}
@@ -53,6 +53,6 @@ export const PageActions = ({
 
 
       {customButtons}
-    </Space.Compact>
+    </Space>
   );
 };

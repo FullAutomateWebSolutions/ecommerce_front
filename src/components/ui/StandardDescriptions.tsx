@@ -17,7 +17,7 @@ interface StandardDescriptionsFormProps {
 
 }
 interface StandardDescriptions{
-  label: string,
+  label: React.ReactNode,
   children: React.ReactNode
 }
 
@@ -38,15 +38,16 @@ export const StandardDescriptions = ({ data }: StandardDescriptionsProps) => (
 
 export const StandardDescriptionsForm = ({ data,column,extra,title }: StandardDescriptionsFormProps) => (
   <Descriptions
-  extra={extra}
-  title={title}
+    extra={extra}
+    title={title}
     bordered
     column={column}
+    
     size="small"
-    style={{ marginBottom: 24 }}
+    style={{ marginBottom: 10 }}
   >
     {data.map((e, index) => (
-      <Descriptions.Item style={{textAlign: "center"}} key={index} label={e.label}>
+      <Descriptions.Item  key={index} label={e.label}>
         {e.children}
       </Descriptions.Item>
     ))}

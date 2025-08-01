@@ -23,13 +23,11 @@ const ModalBase = ({
   okText = "Salvar",
   cancelText = "Cancelar",
   confirmLoading = false,
-  
-  width = 600,
+  width,
   footer,
 }: ModalBaseProps) => {
   return (
     <Modal
-    
       title={title}
       open={open}
       onOk={onOk}
@@ -37,11 +35,22 @@ const ModalBase = ({
       okText={okText}
       cancelText={cancelText}
       confirmLoading={confirmLoading}
-      width={width}
+      width={width === undefined ? 600 : width}
       footer=""
       destroyOnClose
     >
-      {children}
+     <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "200px", 
+          textAlign: "center",
+        }}
+      >
+        {children}
+      </div>
     </Modal>
   );
 };
