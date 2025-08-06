@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Select, Button, InputNumber } from "antd";
 import axios from "axios";
+import { useMercadoLivre } from "@/hooks/useMercadoLivre";
 
 type Attribute = {
   id: string;
@@ -17,21 +18,22 @@ type ProductFormProps = {
   onSubmit: (data: any) => void;
 };
 
-export function ProductFormDinamicoObrigatorioMercadoLivre({ categoryId, onSubmit }: ProductFormProps) {
+export function ProductFormDinamicoObrigatorioMercadoLivre({
+  categoryId,
+  onSubmit,
+}: ProductFormProps) {
   const [form] = Form.useForm();
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState(false);
+  const { AttributeForm } = useMercadoLivre();
 
   // Buscar atributos obrigatórios da categoria
   useEffect(() => {
-    async function fetchAttributes() {
-      const res = await axios.get(
-        `https://atf-m1.vercel.app/api/mercadolivre/categories/${categoryId}/attributes`
-      );
-      const required = res.data.filter((attr: Attribute) => attr.tags?.required);
-      setAttributes(required);
-    }
-    fetchAttributes();
+    AttributeForm.mutate(categoryId, {
+      onSuccess: (data) => {
+        setAttributes(data);
+      },
+    });
   }, [categoryId]);
 
   const renderInput = (attribute: Attribute) => {
@@ -65,8 +67,14 @@ export function ProductFormDinamicoObrigatorioMercadoLivre({ categoryId, onSubmi
 
     const attributes = Object.entries(attributeValues).map(([key, value]) => ({
       id: key,
-      value_id: typeof value === "string" && value.startsWith("MLB") ? value : undefined,
-      value_name: typeof value === "string" && !value.startsWith("MLB") ? value : undefined,
+      value_id:
+        typeof value === "string" && value.startsWith("MLB")
+          ? value
+          : undefined,
+      value_name:
+        typeof value === "string" && !value.startsWith("MLB")
+          ? value
+          : undefined,
     }));
 
     const payload = {
@@ -99,11 +107,19 @@ export function ProductFormDinamicoObrigatorioMercadoLivre({ categoryId, onSubmi
         <InputNumber min={0} style={{ width: "100%" }} />
       </Form.Item>
 
-      <Form.Item name="available_quantity" label="Quantidade" rules={[{ required: true }]}>
+      <Form.Item
+        name="available_quantity"
+        label="Quantidade"
+        rules={[{ required: true }]}
+      >
         <InputNumber min={1} style={{ width: "100%" }} />
       </Form.Item>
 
-      <Form.Item name="buying_mode" label="Modo de compra" rules={[{ required: true }]}>
+      <Form.Item
+        name="buying_mode"
+        label="Modo de compra"
+        rules={[{ required: true }]}
+      >
         <Select>
           <Select.Option value="buy_it_now">Compra Imediata</Select.Option>
           <Select.Option value="auction">Leilão</Select.Option>
@@ -117,7 +133,11 @@ export function ProductFormDinamicoObrigatorioMercadoLivre({ categoryId, onSubmi
         </Select>
       </Form.Item>
 
-      <Form.Item name="listing_type_id" label="Tipo de anúncio" rules={[{ required: true }]}>
+      <Form.Item
+        name="listing_type_id"
+        label="Tipo de anúncio"
+        rules={[{ required: true }]}
+      >
         <Select>
           <Select.Option value="gold_pro">Profissional</Select.Option>
           <Select.Option value="gold_special">Especial</Select.Option>
@@ -125,7 +145,11 @@ export function ProductFormDinamicoObrigatorioMercadoLivre({ categoryId, onSubmi
         </Select>
       </Form.Item>
 
-      <Form.Item name="description" label="Descrição" rules={[{ required: true }]}>
+      <Form.Item
+        name="description"
+        label="Descrição"
+        rules={[{ required: true }]}
+      >
         <Input.TextArea rows={4} />
       </Form.Item>
 

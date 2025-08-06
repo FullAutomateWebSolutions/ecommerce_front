@@ -10,6 +10,7 @@ export function useProducts() {
   const list = useQuery({
     queryKey: ["produtos"],
     queryFn: () => productService.getAll(),
+
   });
 
   const create = useMutation({
@@ -17,6 +18,7 @@ export function useProducts() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["produtos"] });
     },
+    
   });
   
   return { list, create };

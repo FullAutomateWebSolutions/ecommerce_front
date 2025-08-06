@@ -5,6 +5,7 @@ import ModalBase from "@/components/ui/ModalBase";
 import { PageActions } from "@/components/layout/PageActions";
 import { FormularioCategorias } from "@/pages/MercadoLivre/form/AtributosCategoriaMercadoLivreManualForm";
 import { ProductFormDinamicoObrigatorioMercadoLivre } from "../form/ProductFormDinamicoObrigatorioMercadoLivre";
+import MercadoLivreTrends from "./MercadoLivreTrends";
 
 const MercadoLivre = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +42,9 @@ const MercadoLivre = () => {
             />
           </>
         }
-        children={<></>}
+        children={<>
+        <MercadoLivreTrends/>
+        </>}
       />
 
       <ModalBase

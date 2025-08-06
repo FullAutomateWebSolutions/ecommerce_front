@@ -31,7 +31,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({
       <ProductForm
         initialValues={initialValues}
         onSubmit={(values) => {
-          onSave(values);
+          onSave({...values, id: initialValues?.id});
           onClose();
         }}
         loading={loading}

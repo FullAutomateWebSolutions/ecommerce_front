@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Form,
   Input,
@@ -13,10 +13,14 @@ import {
   message,
   Row,
   Col,
+  Switch,
 } from "antd";
-import { Product } from "@/types/type";
+import { AttributeML, Product } from "@/types/type";
 import dayjs from "dayjs";
 import { useGenericPost } from "@/hooks/useQueryStore";
+import { categorias } from "@/pages/MercadoLivre/form/AtributosCategoriaMercadoLivreManualForm";
+import { useMercadoLivre } from "@/hooks/useMercadoLivre";
+import { loginStore } from "@/store/useStore";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -36,13 +40,22 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [thumbnailUrl, setThumbnailUrl] = useState(
     initialValues?.thumbnail || ""
   );
-  const [data, setData] = useState<Product>();
 
+  const [data, setData] = useState<Product>();
+  const [selectCategoriaML, setSelectCategoriaML] = useState<string>(
+    initialValues?.mercadoLivre?.categoria || ""
+  );
   const [brandImageUrl, setBrandImageUrl] = useState(
     initialValues?.brand?.picture || ""
   );
+  const [desc, setDesc] = useState(
+    initialValues?.mercadoLivre?.description || ""
+  );
+  const [attributes, setAttributes] = useState<AttributeML[]>([]);
   const idForm = Form.useWatch("id", form);
   const gtinForm = Form.useWatch("gtin", form);
+  const { AttributeForm } = useMercadoLivre();
+  const { userSing } = loginStore();
 
   const { mutate, isPending } = useGenericPost({
     endpoint: "/search_byGtin_product",
@@ -52,23 +65,59 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     },
   });
 
-  // search_set_product
+  useEffect(() => {
+    handleFormML;
+  }, [attributes]);
 
- const handleFinish = (values: any) => {
-  if (values.release_date) {
-    values.release_date = values.release_date.format("YYYY-MM-DD");
-  }
-
-  const changedFields: Record<string, any> = {};
-  for (const key in values) {
-    //@ts-ignore
-    if (values[key] !== initialValues[key]) {
-      changedFields[key] = values[key];
+  const handleFinish = (values: any) => {
+    if (values.release_date) {
+      values.release_date = values.release_date.format("YYYY-MM-DD");
     }
-  }
 
-  onSubmit(changedFields);
-};
+    // const attributes = Object.entries(values).map(([key, value]) => ({
+    //   id: key,
+    //   value_id:
+    //     typeof value === "string" && value.startsWith("MLB")
+    //       ? value
+    //       : undefined,
+    //   value_name:
+    //     typeof value === "string" && !value.startsWith("MLB")
+    //       ? value
+    //       : undefined,
+    // }));
+
+    // const payload = {
+    //   title,
+    //   price,
+    //   available_quantity,
+    //   buying_mode,
+    //   condition,
+    //   listing_type_id,
+    //   description: {
+    //     plain_text: description,
+    //   },
+    //   pictures: pictures
+    //     .split(",")
+    //     .map((url: string) => ({ source: url.trim() })),
+    //   // category_id: values,
+    //   attributes,
+    // };
+
+    // const changedFields: Record<string, any> = {};
+    // for (const key in values) {
+    //   //@ts-ignore
+    //   if ((values[key] !== initialValues[key])) {
+    //     changedFields[key] = values[key];
+    //   }
+    // }
+
+    onSubmit({
+      ...values,
+      created_at: initialValues?.created_at? initialValues.created_at: dayjs(new Date).toISOString(),
+      origin: userSing?.email.split("@")[0].toUpperCase(),
+      updated_at: dayjs(new Date).toISOString(),
+    });
+  };
 
   const handleGTINBlur = () => {
     const gtin = form.getFieldValue("gtin");
@@ -79,7 +128,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         onSuccess: (data: Product) => {
           if (data) {
             setData(data);
-
             setThumbnailUrl("");
             form.setFieldsValue({
               ...data,
@@ -91,17 +139,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             if (data.thumbnail) setThumbnailUrl(data.thumbnail);
             if (data.brand?.picture) setBrandImageUrl(data.brand.picture);
-            //@ts-ignore
-            if (data?.message) {
-              //@ts-ignore
-              message.info(data.message);
-              form.setFieldValue("id", "");
-            }
+            if (data.ncm?.full_description) setDesc(data.ncm.full_description);
+            // //@ts-ignore
+            // if (data?.message) {
+            //   //@ts-ignore
+            //   message.info(data.message);
+            //   form.setFieldValue("id", "");
+            // }
           }
         },
         onError: () => {},
       }
     );
+  };
+
+  const handleFormML = () => {
+    AttributeForm.mutate(selectCategoriaML, {
+      onSuccess: (data) => {
+        setAttributes(data);
+      },
+    });
+  };
+
+  const renderInput = (attribute: AttributeML) => {
+    if (attribute.values && attribute.values.length > 0) {
+      return (
+        <Select>
+          {attribute.values.map((opt) => (
+            <Select.Option key={opt.id} value={opt.id}>
+              {opt.name}
+            </Select.Option>
+          ))}
+        </Select>
+      );
+    }
+    return <Input />;
   };
 
   return (
@@ -121,21 +193,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         <Col md={8}>
           <Title level={4}>Informações Básicas</Title>
           {/* loading={loading || isPending} */}
-          <Form.Item name="gtin" label="GTIN(Ean)" rules={[{ required: true }]}>
-            <InputNumber style={{ width: "100%" }} onBlur={handleGTINBlur} />
-          </Form.Item>
-          {!!data?.id || !!initialValues?.id &&(
-          <Form.Item
-            name="id"
-            label="ID_Produto"
-            // rules={[{ required: true, type: "number", min: 10 }]}
-          >
-            <InputNumber
-              disabled={!!data?.id || !!initialValues?.id}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
+
+          {!!data?.id || !!initialValues?.id ? (
+            <Form.Item
+              name="gtin"
+              label="GTIN(Ean)"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                //  disabled={!!data?.id || !!initialValues?.id}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+          ) : (
+            <Form.Item
+              name="gtin"
+              label="GTIN(Ean)"
+              rules={[{ required: true }]}
+            >
+              <InputNumber style={{ width: "100%" }} onBlur={handleGTINBlur} />
+            </Form.Item>
           )}
+
+          {!!data?.id ||
+            (!!initialValues?.id && (
+              <Form.Item
+                name="id"
+                label="ID_Produto"
+                // rules={[{ required: true, type: "number", min: 10 }]}
+              >
+                <InputNumber
+                  disabled={!!data?.id || !!initialValues?.id}
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            ))}
           <Form.Item
             name="description"
             label="Descrição"
@@ -150,6 +242,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               onChange={(e) => setThumbnailUrl(e.target.value)}
             />
           </Form.Item>
+
           {thumbnailUrl && (
             <Form.Item>
               <Image width={100} src={thumbnailUrl} alt="thumbnail" />
@@ -177,6 +270,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             </Form.Item>
             <Form.Item name="gross_weight" label="Peso Bruto (kg)">
               <InputNumber />
+            </Form.Item>
+            <Form.Item name="origin" label="Origem">
+              <Input disabled />
             </Form.Item>
           </Space>
         </Col>
@@ -240,6 +336,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       <Form.Item name={["gpc", "description"]} label="Descrição GPC">
         <Input />
       </Form.Item>
+      <Form.Item
+        name={["ncm", "full_description"]}
+        label="Descrição"
+        rules={[{ required: true }]}
+      >
+        <Input.TextArea rows={4} />
+      </Form.Item>
 
       <Divider />
 
@@ -281,6 +384,127 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </>
         )}
       </Form.List>
+      <Divider />
+
+      <Title level={4}>Mercado Livre</Title>
+
+      <Form.Item
+        name={["mercadoLivre", "categoria"]}
+        label="Categoria Mercado Livre"
+      >
+        <Select
+          onSelect={(e: string) => setSelectCategoriaML(e)}
+          onBlur={handleFormML}
+        >
+          {categorias.map((e) => (
+            <Option key={e.id} children={e.name} />
+          ))}
+        </Select>
+      </Form.Item>
+      {AttributeForm.isPending && <>Carregando....</>}
+      {(attributes.length > 0 || initialValues?.mercadoLivre) && (
+        <>
+          <Title level={4}>Base de parametro (Simples)</Title>
+          <Space wrap>
+            <Form.Item
+              name={["mercadoLivre", "title"]}
+              label="Título"
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name={["mercadoLivre", "price"]}
+              label="Preço (R$)"
+              rules={[{ required: true }]}
+            >
+              <InputNumber min={0} style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item
+              name={["mercadoLivre", "available_quantity"]}
+              label="Quantidade"
+              rules={[{ required: true }]}
+            >
+              <InputNumber min={1} style={{ width: "100%" }} />
+            </Form.Item>
+          </Space>
+          <Form.Item name={["mercadoLivre", "ativo"]} label="SiteEnvio">
+            <Switch checkedChildren="Ativo" unCheckedChildren="Inativo" />
+          </Form.Item>
+          <Title level={4}>Modo de venda</Title>
+
+          <Space wrap>
+            <Form.Item
+              name={["mercadoLivre", "buying_mode"]}
+              label="Modo de compra"
+              rules={[{ required: true }]}
+            >
+              <Select>
+                <Select.Option value="buy_it_now">
+                  Compra Imediata
+                </Select.Option>
+                <Select.Option value="auction">Leilão</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name={["mercadoLivre", "condition"]}
+              label="Condição"
+              rules={[{ required: true }]}
+            >
+              <Select>
+                <Select.Option value="new">Novo</Select.Option>
+                <Select.Option value="used">Usado</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name={["mercadoLivre", "listing_type_id"]}
+              label="Tipo de anúncio"
+              rules={[{ required: true }]}
+            >
+              <Select>
+                <Select.Option value="gold_pro">Profissional</Select.Option>
+                <Select.Option value="gold_special">Especial</Select.Option>
+                <Select.Option value="free">Grátis</Select.Option>
+              </Select>
+            </Form.Item>
+          </Space>
+          <Form.Item
+            name={["mercadoLivre", "description"]}
+            label="Descrição"
+            rules={[{ required: true }]}
+          >
+            <Input.TextArea rows={4} />
+          </Form.Item>
+
+          <Form.Item
+            name={["mercadoLivre", "pictures"]}
+            label="URLs das imagens (separadas por vírgula)"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Title level={5}>Campos dinâmicos obrigatórios da categoria</Title>
+
+          {/* Campos dinâmicos obrigatórios */}
+
+          {attributes.map((attr) => (
+            <Form.Item
+              key={attr.id}
+              label={attr.name}
+              name={["mercadoLivre", "atributos", attr.id]}
+              rules={[
+                { required: true, message: `Preencha o campo ${attr.name}` },
+              ]}
+            >
+              {renderInput(attr)}
+            </Form.Item>
+          ))}
+        </>
+      )}
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={loading || isPending}>

@@ -19,7 +19,7 @@ const ProductList = () => {
   const [editingProduct, setEditingProduct] = useState<Product | undefined>();
 
   const { mutate: mutateProduct } = useGenericPost({
-  endpoint: "/search_set_product?merge=true",
+  endpoint: "/search_set_product",
   queryKey: "product",
 });
 
@@ -36,12 +36,11 @@ const ProductList = () => {
 
   const handleSaveProduct = (product: Product) => {
     if (product.id) {
-       mutateProduct({data : product});
+       mutateProduct({data: product});
     }else{
-      mutateNewProduct({data : product});
+      mutateNewProduct({data: product});
     }
   };
-//7896098909980
     const handleDeleteProduct = (product: Product) => {
        mutateDeleteProduct({data : product}, 
         {
@@ -283,6 +282,7 @@ const ProductList = () => {
           onSwitch={() => console.log()}
           onDelete={() => (handleDeleteProduct(product))}
           onEdit={() => (setEditingProduct(product), setModalOpen(true))}
+          onCreate={() => (setEditingProduct(product), setModalOpen(true))}
           onSwitchDisbled={!product.price}
           onJoinStatus={false}
         />

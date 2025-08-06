@@ -9,7 +9,7 @@ type Props = {
   onCategoriaSelecionada: (categoria: Categoria) => void;
 };
 
-const categorias: Categoria[] = [
+export const categorias: Categoria[] = [
   { id: 'MLB5672', name: 'Acessórios para Veículos' },
   { id: 'MLB271599', name: 'Agro' },
   { id: 'MLB1403', name: 'Alimentos e Bebidas' },

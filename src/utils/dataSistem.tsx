@@ -21,7 +21,29 @@ export function converterParaFormatoBR(datas: string[]): string[] {
   });
 }
 
+export function converterParaFormatoBRSimples(datas: string): string {
+  
+    const data = new Date(datas);
+    const dia = String(data.getUTCDate()).padStart(2, '0');
+    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+    const ano = data.getUTCFullYear();
+    const horas = String(data.getHours()).padStart(2, "0");
+    const minutos = String(data.getMinutes()).padStart(2, "0");
+    return `${mes}/${dia}/${ano}`;
+  ;
+}
 
+export function converterParaFormatoBRSimplesRangePicker(datas: string): string {
+  
+    const data = new Date(datas);
+    const dia = String(data.getUTCDate()).padStart(2, '0');
+    const mes = String(data.getUTCMonth() + 1).padStart(2, '0');
+    const ano = data.getUTCFullYear();
+    const horas = String(data.getHours()).padStart(2, "0");
+    const minutos = String(data.getMinutes()).padStart(2, "0");
+    return `${dia}/${mes}/${ano}`;
+  ;
+}
 // const dataUtc = new Date("Tue, 01 Jul 2025 19:22:29 GMT");
 
 // export const formatado = dataUtc.toLocaleString("pt-BR", {

@@ -71,7 +71,8 @@ export const LojaForm = ({
 
   const handleFinish = (values: Loja) => {
     const dataCadastro = initialValues?.dataCadastro || new Date().toISOString();
-    onSubmit({ ...values, dataCadastro });
+    onSubmit({ ...values,id: initialValues?.id, dataCadastro });
+      form.resetFields();
   };
 
   return (

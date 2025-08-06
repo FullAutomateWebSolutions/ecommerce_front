@@ -68,7 +68,25 @@ export interface Product {
   ncm?: Ncm;
   gpc?:GCP;
   category?: Category;
+  mercadoLivre?:mercadoLivreI;
 }
+
+type mercadoLivreI ={
+categoria?:string;
+description?: string;
+atributos?:  AttributeML
+}
+
+export type AttributeML = {
+  id: string;
+  name: string;
+  value_type: string;
+  values?: { id: string; name: string }[];
+  tags?: {
+    required?: boolean;
+  };
+};
+
 
 export interface GCP {
   code?: string;

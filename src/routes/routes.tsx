@@ -11,6 +11,7 @@ import User from '@/pages/user/user';
 import Product from '@/pages/product/product';
 import MercadoLivre from '@/pages/MercadoLivre/page/MercadoLivre';
 import Inventory from '@/pages/Inventory/Inventory';
+import Store from '@/pages/Store/store';
 
 /*Passagens do sistemas rotas existentes */
 const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
     children: [
      {        path :"perfil", element: (<AuthProvider ><PrivateRoute roleUser='public'><User/></PrivateRoute></AuthProvider>),},     
      {        path :"inventario", element: (<AuthProvider ><PrivateRoute roleUser='public'><Inventory/></PrivateRoute></AuthProvider>),},     
+     {        path :"loja", element: (<AuthProvider ><PrivateRoute roleUser='public'><Store/></PrivateRoute></AuthProvider>),},     
      {        path :"MercadoLivre", element: (<AuthProvider ><PrivateRoute roleUser='public'><MercadoLivre/></PrivateRoute></AuthProvider>),},     
      {        path :"cadastro", element: (<AuthProvider ><PrivateRoute roleUser='super'><Product/></PrivateRoute></AuthProvider>),},    
      { path: '404', element:           <AuthProvider ><PrivateRoute roleUser='public'><ErrorPage404/></PrivateRoute></AuthProvider>  },
